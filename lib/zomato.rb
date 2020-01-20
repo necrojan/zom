@@ -13,12 +13,20 @@ module Zom
 
     def get(url, params = {})
       response = if params
-                   client[url].get(params)
+                   client[url].get(params: params)
                  else
                    client[url].get
                 end
 
-      JSON.parse(response)
+      parse_json(response)
+    rescue RestClient::ExceptionWithResponse => e
+      parse_json(e.response.body)
     end
+
+    private
+
+      def parse_json(response)
+        JSON.parse(response)
+      end
   end
 end
